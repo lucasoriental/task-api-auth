@@ -60,7 +60,8 @@ export async function registerController(req, res) {
 export async function deleteUserController(req, res) {
   const { id } = req.params;
   try {
-    await deleteUserModel(id);
+    const result = await deleteUserModel({ id });
+    if (result.rows[0]) return res.send("User not deleted");
     return res.send("User Deleted");
   } catch (err) {
     throw new Error("Error in Controller: ", err);

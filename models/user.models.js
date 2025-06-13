@@ -5,8 +5,7 @@ export async function getAllUsersModels() {
     const query = await pool.query("SELECT * FROM users");
     return query;
   } catch (err) {
-    console.error("Some Error: ", err);
-    throw new Error(err);
+    throw new Error("Error in Model: ", err);
   }
 }
 
@@ -16,9 +15,9 @@ export async function loginModel(data) {
     const query = await pool.query("SELECT * FROM users WHERE email = $1", [
       email,
     ]);
-    return checkQuery;
+    return query;
   } catch (err) {
-    throw new Error("Some Error: ", err);
+    throw new Error("Error in Model: ", err);
   }
 }
 
@@ -31,12 +30,12 @@ export async function registerModel(data) {
     );
     return query;
   } catch (err) {
-    console.error("Some Error: ", err);
-    throw new Error(err);
+    throw new Error("Error in Model: ", err);
   }
 }
 
-export async function deleteUserModel(id) {
+export async function deleteUserModel(data) {
+  const { id } = data;
   try {
     const query = await pool.query("DELETE FROM users WHERE id = $1", [id]);
     return query;
