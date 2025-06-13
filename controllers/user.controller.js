@@ -60,7 +60,6 @@ export async function registerController(req, res) {
     console.log(result);
     if (!result)
       return res.send("Something went wrong, and user wasn't registered!");
-    //${result.rows[0].email}
     res.send(`User: was registered successfully!`);
     return result;
   } catch (err) {
