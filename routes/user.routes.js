@@ -5,6 +5,7 @@ import {
   loginController,
   registerController,
   deleteUserController,
+  logoutUserController,
 } from "../controllers/user.controller.js";
 
 import authToken from "../middleware/auth.middleware.js";
@@ -15,5 +16,6 @@ router.post("/login", loginController);
 router.post("/register", registerController);
 router.get("/getAllUsers", authToken, getAllUsersController);
 router.delete("/deleteUser/:id", deleteUserController);
+router.get("/logout", logoutUserController);
 
 export default router;

@@ -17,7 +17,7 @@ export async function loginModel(data) {
   const { email } = data;
   try {
     const query = await pool.query(
-      "SELECT email, password FROM users WHERE email = $1",
+      "SELECT id, email, password FROM users WHERE email = $1",
       [email]
     );
     return query;

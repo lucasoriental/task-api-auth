@@ -35,10 +35,26 @@ export async function loginController(req, res) {
     if (!isValid) return res.send("Wrong Password");
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: 300,
+      expiresIn: "1h",
     });
 
-    return res.json({ message: "User Logged Successfully!", token });
+    // Definir cookie com o token
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 3600000,
+    });
+
+    return res.status(200).json({
+      message: "Autenticação bem-sucedida",
+      user: {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        token: token,
+      },
+    });
   } catch (err) {
     console.error("Error in Controller:", err);
     return res
@@ -51,13 +67,11 @@ export async function registerController(req, res) {
   const { fullName, email, password } = req.body;
   try {
     const passwordEncrypted = await bcrypt.hash(password, 13);
-    console.log(fullName, email, password, passwordEncrypted);
     const result = await registerModel({
       fullName,
       email,
       password: passwordEncrypted,
     });
-    console.log(result);
     if (!result)
       return res.send("Something went wrong, and user wasn't registered!");
     res.send(`User: was registered successfully!`);
@@ -81,6 +95,25 @@ export async function deleteUserController(req, res) {
     console.error("Error in Controller:", err);
     return res.status(500).json({
       error: "Error while trying to delete the user",
+      details: err.message,
+    });
+  }
+}
+
+export async function logoutUserController(_, res) {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+    });
+    return res
+      .status(200)
+      .json({ message: "Logout operation successfully done." });
+  } catch (err) {
+    console.error("Error in Controller:", err);
+    return res.status(500).json({
+      error: "Error while trying to LogOut",
       details: err.message,
     });
   }
